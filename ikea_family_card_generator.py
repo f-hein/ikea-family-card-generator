@@ -47,11 +47,20 @@ def generate_loyalty_card(name_surname, card_no):
 
 if __name__ == "__main__":
     name_surname = input('Please provide your name and surname: ')
-    second_part_of_card_no = (input('Please pick your card number (9 Xs) [62759 8043 XXXX XXXX X]: '))
-    card_no = (card_number + second_part_of_card_no).replace(' ', '')
-    final_card_no = card_no + str(luhn.checksum(card_no))
-    print('Your final card number: {}, verification by Luhn algorithm says: {}'
-          .format(final_card_no, luhn.verify(final_card_no)))
-    generate_and_save_barcode(final_card_no)
-    generate_loyalty_card(name_surname, final_card_no)
-    print("Your card is saved and ready for action! :)")
+    while True:
+        second_part_of_card_no = (input('Please pick your card number (9 Xs) [62759 8043 XXXX XXXX X]: '))
+        card_no = (card_number + second_part_of_card_no).replace(' ', '')
+        card_no_with_checksum = luhn.append(card_no)
+        print('Your final card number: {}, verification by Luhn algorithm says: {}'
+              .format(card_no_with_checksum, luhn.verify(card_no_with_checksum)))
+        if luhn.verify(card_no_with_checksum):
+            generate_and_save_barcode(card_no_with_checksum)
+            generate_loyalty_card(name_surname, card_no_with_checksum)
+            print("Your card is saved and ready for action! :)")
+            break
+        else:
+            print('-'*20)
+            print(second_part_of_card_no)
+            print(card_no)
+            print(card_no_with_checksum)
+            print("[!] Could not create a card. Number you provided was corrupted in some way.")
